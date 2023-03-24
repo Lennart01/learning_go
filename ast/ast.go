@@ -76,4 +76,12 @@ func main() {
 	fmt.Print(plus_exp3.Pretty())
 	fmt.Println("=", plus_exp3.Eval())
 
+	int_exp = IntExp{Val: 5}
+	int_exp2 = IntExp{Val: 10}
+	int_exp3 = IntExp{Val: 15}
+	plus_exp = PlusExp{Left: int_exp, Right: int_exp}
+	mult_exp = MultExp{Left: plus_exp, Right: int_exp2}
+	fmt.Print(mult_exp.Pretty())
+	fmt.Println("=", mult_exp.Eval())
+
 }
