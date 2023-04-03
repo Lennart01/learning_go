@@ -1,0 +1,2 @@
+# VM
+The virtual machine (VM) operates on a stack and a newly defined struct called `Code`. The `Code` struct contains an Element of the type `OpCode` and an int value. The `OPCode` is an enum that contains all possible operations.
