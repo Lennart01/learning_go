@@ -23,4 +23,4 @@ jobs:
         go run vm/main.go
     - name: AST
       run:
-        go run ast/main.go
+        go run ast/ast.go
