@@ -19,4 +19,6 @@ jobs:
         go-version: 1.19
 
     - name: Run
-      run: go run vm/main.go
+      run: 
+        go run vm/main.go
+        go run ast/main.go
