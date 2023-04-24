@@ -4,5 +4,17 @@ This repo contains my personal learning experience with Go as part of my project
 ## Structure
 ````
 .
+.
 ├── ast (contains the abstract syntax tree)
+│   ├── ast.cpp
+│   ├── ast.go
+│   ├── ast.h
+│   └── readme.md
+├── readme.md
+└── vm (contains a virtual machine executing basic arithmetic operations)
+    ├── main.go
+    ├── readme.md
+    ├── utility.h
+    ├── vm.cpp
+    └── vm.h
 ````
