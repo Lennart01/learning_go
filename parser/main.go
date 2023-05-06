@@ -20,6 +20,7 @@ const (
 
 type EXP interface {
 	String() string
+	Eval() int
 }
 
 type Int struct {
@@ -28,6 +29,10 @@ type Int struct {
 
 func (i *Int) String() string {
 	return strconv.Itoa(i.val)
+}
+
+func (i *Int) Eval() int {
+	return i.val
 }
 
 type BinOp struct {
@@ -46,6 +51,16 @@ func (b *BinOp) String() string {
 	}
 	return fmt.Sprintf("(%s %s %s)", b.left.String(), op, b.right.String())
 }
+func (b *BinOp) Eval() int {
+	switch b.op {
+	case PLUS:
+		return b.left.Eval() + b.right.Eval()
+	case MULT:
+		return b.left.Eval() * b.right.Eval()
+	default:
+		return 0
+	}
+}
 
 type Parser struct {
 	s   string
@@ -59,7 +74,14 @@ func NewParser(s string) *Parser {
 	}
 }
 
+func (p *Parser) skipWhitespace() {
+	for p.pos < len(p.s) && (p.s[p.pos] == ' ' || p.s[p.pos] == '\t' || p.s[p.pos] == '\n') {
+		p.pos++
+	}
+}
+
 func (p *Parser) next() Token {
+	p.skipWhitespace()
 	if p.pos >= len(p.s) {
 		return EOS
 	}
@@ -123,13 +145,14 @@ func (p *Parser) parseT() EXP {
 }
 
 func (p *Parser) parseF() EXP {
-	switch p.next() {
-	case ZERO:
-		return &Int{0}
-	case ONE:
-		return &Int{1}
-	case TWO:
-		return &Int{2}
+	tok := p.next()
+	switch tok {
+	case ZERO, ONE, TWO:
+		val, err := strconv.Atoi(p.s[p.pos-1 : p.pos])
+		if err != nil {
+			return nil
+		}
+		return &Int{val}
 	case OPEN:
 		expr := p.parseE()
 		if p.next() == CLOSE {
@@ -138,17 +161,14 @@ func (p *Parser) parseF() EXP {
 			return nil
 		}
 	default:
-		val, err := strconv.Atoi(p.s[p.pos-1 : p.pos])
-		if err != nil {
-			return nil
-		}
-		return &Int{val}
+		return nil
 	}
 }
 
 func main() {
-	expr := "1 + 2 * 0"
+	expr := "2 * (1 + 1)"
 	parser := NewParser(expr)
 	ast := parser.parse()
-	fmt.Println(ast)
+	fmt.Println("AST:", ast)
+	fmt.Println("Result:", ast.Eval())
 }
