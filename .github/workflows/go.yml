@@ -26,5 +26,5 @@ jobs:
         go run ast/ast.go
     - name: Parser
       run:
-        go run parser/parser.go
+        go run parser/main.go
         go test -v ./parser
