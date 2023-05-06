@@ -169,6 +169,7 @@ func main() {
 	expr := "2 * (1 + 1)"
 	parser := NewParser(expr)
 	ast := parser.parse()
+	fmt.Println("Expr:", expr)
 	fmt.Println("AST:", ast)
 	fmt.Println("Result:", ast.Eval())
 }
