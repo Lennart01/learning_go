@@ -13,6 +13,7 @@ func TestParse(t *testing.T) {
 		{"2 * (1 + 1)", 4},
 		{"(2 + 1) * 0", 0},
 		{"1 + (2 * 1) + 2", 5},
+		{"1+2+1 * 2", 5},
 	}
 
 	for _, tt := range tests {
