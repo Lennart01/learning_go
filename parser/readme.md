@@ -22,6 +22,14 @@ Once the AST has been generated, the evaluator can then traverse the tree and ev
 
 The evaluator works by recursively evaluating each node of the tree. For integer literals, it simply returns the integer value. For addition and multiplication nodes, it recursively evaluates the left and right operands, and applies the corresponding operation to the results.
 
+## Diferences to the original [C++ implementation](cpp_source)
+
+### Parsing strategy
+
+The Go implementation uses a recursive descent parsing strategy, where each level of precedence is handled by a separate parsing function.
+
+The C++ implementation, on the other hand, uses a bottom-up parsing strategy known as operator precedence parsing, where operators are parsed in order of their precedence. .
+
 ## Limitations
 
 - It only supports a limited set of operators and operands
