@@ -40,3 +40,25 @@ The evaluator works by recursively evaluating each node of the tree. For integer
   - Parentheses for grouping expressions
 - It does not support variables or functions
 - It does not handle syntax errors gracefully
+
+## Bonus (Pratt Parser)
+
+The Pratt Parser is a top-down operator precedence parser that is used to parse expressions. It was invented by Vaughan Pratt in 1973 and is widely used in programming languages and compilers.
+
+### How It Works
+
+The Pratt Parser works by recursively parsing expressions based on operator precedence. It uses a set of parsing rules that are defined for each operator, which specify how to parse expressions containing that operator.
+
+The parser starts by parsing the leftmost token in the expression, which is usually an operand. It then looks ahead to the next token to determine if it is an operator. If it is, the parser checks the parsing rules for that operator to determine how to parse the expression.
+
+The parsing rules for an operator specify the precedence level of the operator, as well as the associativity (left or right) and the behavior of the operator when it is applied to its operands. The parser uses these rules to recursively parse the expression, building up an abstract syntax tree (AST) as it goes.
+
+### Implementation
+The Pratt Parser is implemented in the `pratt_parser.go` file. The file defines several types, including `Token`, `Expression`, `Number`, and `BinaryOp`. `Token` represents a token in the input string, `Expression` represents an expression in the input string, `Number` represents a numeric value in the input string, and `BinaryOp` represents a binary operation in the input string.
+
+The file also defines a `Parser` struct that takes a list of tokens and uses a `parseExpression` method to parse the input string and return the resulting expression. The `parseExpression` method is the main entry point for parsing expressions, and takes a `precedence level` as an argument. It first parses the leftmost expression using the `parseAtom` method, and then iteratively parses infix expressions using the `parseExpression ` method until it reaches an operator with a lower precedence level than the current precedence.
+
+The `parseAtom` method parses an atomic expression, which can be a number or a subexpression enclosed in parentheses. The parseExpression method parses an expression with the given precedence level, using the parsing rules for each operator to determine how to parse the expression.
+
+
+
