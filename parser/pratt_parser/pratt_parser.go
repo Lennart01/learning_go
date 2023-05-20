@@ -5,6 +5,7 @@ import (
 	"strconv"
 )
 
+// Define a set of tokens as constants
 type Token int
 
 const (
@@ -18,29 +19,35 @@ const (
 	MULT
 )
 
+// Define an interface for expressions
 type EXP interface {
 	String() string
 	Eval() int
 }
 
+// Define a struct for integer expressions
 type Int struct {
 	val int
 }
 
+// Implement the String() method for Int expressions
 func (i *Int) String() string {
 	return strconv.Itoa(i.val)
 }
 
+// Implement the Eval() method for Int expressions
 func (i *Int) Eval() int {
 	return i.val
 }
 
+// Define a struct for binary operation expressions
 type BinOp struct {
 	left  EXP
 	right EXP
 	op    Token
 }
 
+// Implement the String() method for BinOp expressions
 func (b *BinOp) String() string {
 	op := ""
 	switch b.op {
@@ -52,6 +59,7 @@ func (b *BinOp) String() string {
 	return fmt.Sprintf("(%s %s %s)", b.left.String(), op, b.right.String())
 }
 
+// Implement the Eval() method for BinOp expressions
 func (b *BinOp) Eval() int {
 	switch b.op {
 	case PLUS:
@@ -63,11 +71,13 @@ func (b *BinOp) Eval() int {
 	}
 }
 
+// Define a struct for the parser
 type Parser struct {
 	s   string
 	pos int
 }
 
+// Create a new parser with the given string
 func NewParser(s string) *Parser {
 	return &Parser{
 		s:   s,
@@ -75,12 +85,14 @@ func NewParser(s string) *Parser {
 	}
 }
 
+// Skip whitespace characters in the input string
 func (p *Parser) skipWhitespace() {
 	for p.pos < len(p.s) && (p.s[p.pos] == ' ' || p.s[p.pos] == '\t' || p.s[p.pos] == '\n') {
 		p.pos++
 	}
 }
 
+// Get the next token in the input string
 func (p *Parser) next() Token {
 	p.skipWhitespace()
 	if p.pos >= len(p.s) {
@@ -113,6 +125,7 @@ func (p *Parser) next() Token {
 	}
 }
 
+// Get the precedence of a token
 func (p *Parser) precedence(tok Token) int {
 	switch tok {
 	case PLUS:
@@ -124,10 +137,12 @@ func (p *Parser) precedence(tok Token) int {
 	}
 }
 
+// Parse an expression
 func (p *Parser) parse() EXP {
 	return p.parseExpression(0)
 }
 
+// Parse an expression with a minimum precedence
 func (p *Parser) parseExpression(minPrecedence int) EXP {
 	left := p.parsePrimary()
 
@@ -144,6 +159,7 @@ func (p *Parser) parseExpression(minPrecedence int) EXP {
 	}
 }
 
+// Parse a primary expression
 func (p *Parser) parsePrimary() EXP {
 	tok := p.next()
 	switch tok {
@@ -165,6 +181,7 @@ func (p *Parser) parsePrimary() EXP {
 	}
 }
 
+// Main function
 func main() {
 	expr := "2 * (1 + 1 + 1) * 2 + 1"
 	parser := NewParser(expr)
