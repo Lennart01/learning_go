@@ -1,3 +1,5 @@
+// pratt_parser.go
+
 package main
 
 import (
@@ -5,173 +7,184 @@ import (
 	"strconv"
 )
 
-// Define a set of tokens as constants
-type Token int
-
+// Token types
 const (
-	EOS Token = iota // End of string
-	ZERO
-	ONE
-	TWO
-	OPEN
-	CLOSE
+	NUMBER = iota
 	PLUS
-	MULT
+	MINUS
+	MULTIPLY
+	DIVIDE
+	LPAREN
+	RPAREN
 )
 
-// Define an interface for expressions
-type EXP interface {
+// Token represents a token in the input string
+type Token struct {
+	Type  int
+	Value string
+}
+
+// Expression represents an expression in the input string
+type Expression interface {
 	String() string
-	Eval() int
+	Eval() float64
 }
 
-// Define a struct for integer expressions
-type Int struct {
-	val int
+// Number represents a numeric value in the input string
+type Number struct {
+	Value float64
 }
 
-// Implement the String() method for Int expressions
-func (i *Int) String() string {
-	return strconv.Itoa(i.val)
+// String returns the string representation of the Number
+func (n Number) String() string {
+	return strconv.FormatFloat(n.Value, 'f', -1, 64)
 }
 
-// Implement the Eval() method for Int expressions
-func (i *Int) Eval() int {
-	return i.val
+// Eval returns the numeric value of the Number
+func (n Number) Eval() float64 {
+	return n.Value
 }
 
-// Define a struct for binary operation expressions
-type BinOp struct {
-	left  EXP
-	right EXP
-	op    Token
+// BinaryOp represents a binary operation in the input string
+type BinaryOp struct {
+	Left  Expression
+	Right Expression
+	Op    int
 }
 
-// Implement the String() method for BinOp expressions
-func (b *BinOp) String() string {
-	op := ""
-	switch b.op {
+// String returns the string representation of the BinaryOp
+func (b BinaryOp) String() string {
+	return fmt.Sprintf("(%s %c %s)", b.Left.String(), b.Op, b.Right.String())
+}
+
+// Eval returns the numeric value of the BinaryOp
+func (b BinaryOp) Eval() float64 {
+	switch b.Op {
 	case PLUS:
-		op = "+"
-	case MULT:
-		op = "*"
-	}
-	return fmt.Sprintf("(%s %s %s)", b.left.String(), op, b.right.String())
-}
-
-// Implement the Eval() method for BinOp expressions
-func (b *BinOp) Eval() int {
-	switch b.op {
-	case PLUS:
-		return b.left.Eval() + b.right.Eval()
-	case MULT:
-		return b.left.Eval() * b.right.Eval()
+		return b.Left.Eval() + b.Right.Eval()
+	case MINUS:
+		return b.Left.Eval() - b.Right.Eval()
+	case MULTIPLY:
+		return b.Left.Eval() * b.Right.Eval()
+	case DIVIDE:
+		return b.Left.Eval() / b.Right.Eval()
 	default:
 		return 0
 	}
 }
 
-// Define a struct for the parser
+// Parser represents a parser for the input string
 type Parser struct {
-	s   string
-	pos int
+	tokens []Token
+	pos    int
 }
 
-// Create a new parser with the given string
-func NewParser(s string) *Parser {
-	return &Parser{
-		s:   s,
-		pos: 0,
-	}
+// NewParser creates a new parser for the given input string
+func NewParser(input string) *Parser {
+	tokens := tokenize(input)
+	return &Parser{tokens: tokens, pos: 0}
 }
 
-// Skip whitespace characters in the input string
-func (p *Parser) skipWhitespace() {
-	for p.pos < len(p.s) && (p.s[p.pos] == ' ' || p.s[p.pos] == '\t' || p.s[p.pos] == '\n') {
-		p.pos++
-	}
-}
-
-// Get the next token in the input string
-func (p *Parser) next() Token {
-	p.skipWhitespace()
-	if p.pos >= len(p.s) {
-		return EOS
-	}
-	switch p.s[p.pos] {
-	case '0':
-		p.pos++
-		return ZERO
-	case '1':
-		p.pos++
-		return ONE
-	case '2':
-		p.pos++
-		return TWO
-	case '(':
-		p.pos++
-		return OPEN
-	case ')':
-		p.pos++
-		return CLOSE
-	case '+':
-		p.pos++
-		return PLUS
-	case '*':
-		p.pos++
-		return MULT
-	default:
-		return EOS
-	}
-}
-
-// Get the precedence of a token
-func (p *Parser) precedence(tok Token) int {
-	switch tok {
-	case PLUS:
-		return 10
-	case MULT:
-		return 20
-	default:
-		return -1
-	}
-}
-
-// Parse an expression
-func (p *Parser) parse() EXP {
+// parse parses the input string and returns the resulting expression
+func (p *Parser) parse() Expression {
 	return p.parseExpression(0)
 }
 
-// Parse an expression with a minimum precedence
-func (p *Parser) parseExpression(minPrecedence int) EXP {
-	left := p.parsePrimary()
+// tokenize converts the input string into a list of tokens
+func tokenize(input string) []Token {
+	var tokens []Token
+	i := 0
 
-	for {
-		tok := p.next()
-		precedence := p.precedence(tok)
-		if precedence < minPrecedence {
-			p.pos--
-			return left
+	for i < len(input) {
+		switch input[i] {
+		case '+':
+			tokens = append(tokens, Token{Type: PLUS, Value: "+"})
+			i++
+		case '-':
+			tokens = append(tokens, Token{Type: MINUS, Value: "-"})
+			i++
+		case '*':
+			tokens = append(tokens, Token{Type: MULTIPLY, Value: "*"})
+			i++
+		case '/':
+			tokens = append(tokens, Token{Type: DIVIDE, Value: "/"})
+			i++
+		case '(':
+			tokens = append(tokens, Token{Type: LPAREN, Value: "("})
+			i++
+		case ')':
+			tokens = append(tokens, Token{Type: RPAREN, Value: ")"})
+			i++
+		default:
+			if isDigit(input[i]) {
+				start := i
+				for i < len(input) && (isDigit(input[i]) || input[i] == '.') {
+					i++
+				}
+				tokens = append(tokens, Token{Type: NUMBER, Value: input[start:i]})
+			} else {
+				i++
+			}
 		}
-
-		right := p.parseExpression(precedence + 1)
-		left = &BinOp{left, right, tok}
 	}
+
+	return tokens
 }
 
-// Parse a primary expression
-func (p *Parser) parsePrimary() EXP {
-	tok := p.next()
-	switch tok {
-	case ZERO, ONE, TWO:
-		val, err := strconv.Atoi(p.s[p.pos-1 : p.pos])
-		if err != nil {
-			return nil
+// isDigit returns true if the given character is a digit
+func isDigit(c byte) bool {
+	return c >= '0' && c <= '9'
+}
+
+// parseExpression parses an expression with the given precedence
+func (p *Parser) parseExpression(precedence int) Expression {
+	left := p.parseAtom()
+
+	for p.pos < len(p.tokens) {
+		token := p.tokens[p.pos]
+
+		if token.Type != PLUS && token.Type != MINUS && token.Type != MULTIPLY && token.Type != DIVIDE {
+			break
 		}
-		return &Int{val}
-	case OPEN:
+
+		if token.Type == PLUS && precedence <= 1 {
+			p.pos++
+			right := p.parseExpression(1)
+			left = BinaryOp{Left: left, Right: right, Op: PLUS}
+		} else if token.Type == MINUS && precedence <= 1 {
+			p.pos++
+			right := p.parseExpression(1)
+			left = BinaryOp{Left: left, Right: right, Op: MINUS}
+		} else if token.Type == MULTIPLY && precedence <= 2 {
+			p.pos++
+			right := p.parseExpression(2)
+			left = BinaryOp{Left: left, Right: right, Op: MULTIPLY}
+		} else if token.Type == DIVIDE && precedence <= 2 {
+			p.pos++
+			right := p.parseExpression(2)
+			left = BinaryOp{Left: left, Right: right, Op: DIVIDE}
+		} else {
+			break
+		}
+	}
+
+	return left
+}
+
+// parseAtom parses an atomic expression
+func (p *Parser) parseAtom() Expression {
+	token := p.tokens[p.pos]
+
+	switch token.Type {
+	case NUMBER:
+		p.pos++
+		value, _ := strconv.ParseFloat(token.Value, 64)
+		return Number{Value: value}
+	case LPAREN:
+		p.pos++
 		expr := p.parseExpression(0)
-		if p.next() == CLOSE {
+		if p.tokens[p.pos].Type == RPAREN {
+			p.pos++
 			return expr
 		} else {
 			return nil

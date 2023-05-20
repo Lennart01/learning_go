@@ -22,16 +22,21 @@ Once the AST has been generated, the evaluator can then traverse the tree and ev
 
 The evaluator works by recursively evaluating each node of the tree. For integer literals, it simply returns the integer value. For addition and multiplication nodes, it recursively evaluates the left and right operands, and applies the corresponding operation to the results.
 
+## Similarities to the original [C++ implementation](cpp_source)
+- Both implementations use a recursive descent parsing technique to generate an abstract syntax tree (AST) from the input expression.
+- Both implementations use a similar approach to evaluate the expression by recursively traversing the AST and applying the corresponding operations to the operands.
+- Both implementations support a limited set of operators and operands, including addition, multiplication, integer literals, and parentheses.
+
 ## Diferences to the original [C++ implementation](cpp_source)
-
-### Parsing strategy
-
-The Go implementation uses a recursive descent parsing strategy, where each level of precedence is handled by a separate parsing function.
-
-The C++ implementation, on the other hand, uses a bottom-up parsing strategy known as operator precedence parsing, where operators are parsed in order of their precedence. .
-
+- The Go implementation uses interfaces to define the AST nodes, while the C++ implementation uses a class hierarchy.
+- The Go implementation uses Go's built-in error handling mechanism, while the C++ implementation uses exceptions.
+  
 ## Limitations
 
-- It only supports a limited set of operators and operands
+- It only supports a limited set of operators and operands wich includes:
+  - Addition (+)
+  - Multiplication (*)
+  - Integer literals (0, 1, 2, ...)
+  - Parentheses for grouping expressions
 - It does not support variables or functions
 - It does not handle syntax errors gracefully
