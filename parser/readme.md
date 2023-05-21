@@ -7,7 +7,7 @@ This is a simple expression parser and evaluator written in Go. It supports pars
 
 The parser can handle expressions containing the following operands:
 
-- Integer literals (0, 1, 2, ...)
+- Integer literals (0, 1, 2)
 - Parentheses for grouping expressions
 
 ## How It Works
@@ -36,7 +36,7 @@ The evaluator works by recursively evaluating each node of the tree. For integer
 - It only supports a limited set of operators and operands wich includes:
   - Addition (+)
   - Multiplication (*)
-  - Integer literals (0, 1, 2, ...)
+  - Integer literals (0, 1, 2)
   - Parentheses for grouping expressions
 - It does not support variables or functions
 - It does not handle syntax errors gracefully
@@ -44,6 +44,12 @@ The evaluator works by recursively evaluating each node of the tree. For integer
 ## Bonus (Pratt Parser)
 
 The Pratt Parser is a top-down operator precedence parser that is used to parse expressions. It was invented by Vaughan Pratt in 1973 and is widely used in programming languages and compilers.
+
+### Additional Features
+
+- Parse all Integer literals (0, 1, 2, ...)
+- Division (/)
+- Subtraction (-)
 
 ### How It Works
 
