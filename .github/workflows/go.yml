@@ -23,6 +23,12 @@ jobs:
     - name: Parser
       run:
         go test -v ./parser
+    - name: pratt_parser
+      run:
+        go test -v ./parser/pratt_parser
+    - name: VM
+      run:
+        go test -v ./vm
 
   run:
     runs-on: ubuntu-latest
@@ -36,13 +42,13 @@ jobs:
 
     - name: VM
       run: 
-        go run vm/main.go
+        go run vm/vm.go
     - name: AST
       run:
         go run ast/ast.go
     - name: Parser
       run:
-        go run parser/main.go
+        go run parser/parser.go
     - name: pratt_parser
       run:
         go run parser/pratt_parser/pratt_parser.go
