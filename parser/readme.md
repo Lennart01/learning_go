@@ -28,8 +28,7 @@ The evaluator works by recursively evaluating each node of the tree. For integer
 - Both implementations support a limited set of operators and operands, including addition, multiplication, integer literals, and parentheses.
 
 ## Diferences to the original [C++ implementation](cpp_source)
-- The Go implementation uses interfaces to define the AST nodes, while the C++ implementation uses a class hierarchy.
-- The Go implementation uses Go's built-in error handling mechanism, while the C++ implementation uses exceptions.
+- The Go implementation uses interfaces to define the AST nodes, while the C++ implementation uses a class hierarchy.as
   
 ## Limitations
 
@@ -50,6 +49,16 @@ The Pratt Parser is a top-down operator precedence parser that is used to parse 
 - Parse all Integer literals (0, 1, 2, ...)
 - Division (/)
 - Subtraction (-)
+
+### Advantages of a Pratt Parser
+
+1. **Handling of operator precedence:** One of the main strengths of a Pratt parser is its ability to handle operator precedence in a more straightforward way compared to recursive descent parsing. Instead of having to define different methods for each level of precedence (which can be error-prone and cumbersome), a Pratt parser encapsulates the precedence rules in a table which directly associates each operator with its corresponding precedence level.
+
+2. **Parsing left-recursive grammars:** Recursive descent parsers can struggle with grammars that are left-recursive, while a Pratt parser handles these without any issues. This is especially important for mathematical expressions and programming languages, where left-recursion is common.
+
+3. **Efficiency:** Pratt parsers are typically more efficient than recursive descent parsers as they avoid the need for lookahead or backtracking. This can lead to significant performance improvements, particularly for larger input strings.
+
+4. **Support for more complex grammars:** Pratt parsers can handle a wider range of grammars than recursive descent parsers, including those that would require significant lookahead or backtracking with recursive descent. This makes Pratt parsers a more powerful tool for many parsing tasks.
 
 ### How It Works
 
