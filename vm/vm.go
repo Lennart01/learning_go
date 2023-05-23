@@ -3,6 +3,8 @@ package main
 import (
 	"container/list"
 	"strconv"
+
+	"github.com/lennart01/learning_go/ast"
 )
 
 // Optional type is used to represent a value that may or may not exist
@@ -78,6 +80,39 @@ type VM struct {
 // Creates a new vm
 func NewVM(code []Code) VM {
 	return VM{code, list.New()} // initialize the stack as an empty list
+}
+
+func (vm *VM) parseAst(ast_exp ast.Exp) {
+	// switch case on the type of the ast
+	switch ast_exp := ast_exp.(type) {
+	// if the ast is an int expression
+	case ast.IntExp:
+		// push the value onto the stack
+		vm.code = append(vm.code, NewPushCode(ast_exp.Eval()))
+	// if the ast is a plus expression
+	case ast.PlusExp:
+		// parse the left and right expressions
+		vm.parseAst(ast_exp.Left)
+		vm.parseAst(ast_exp.Right)
+		// push a plus code onto the stack
+		vm.code = append(vm.code, NewPlusCode())
+	// if the ast is a mult expression
+	case ast.MultExp:
+		// parse the left and right expressions
+		vm.parseAst(ast_exp.Left)
+		vm.parseAst(ast_exp.Right)
+		// push a multiply code onto the stack
+		vm.code = append(vm.code, NewMultiplyCode())
+	}
+}
+
+// loads an ast into the vm
+func LoadAst(ast ast.Exp) VM {
+	// create a new vm
+	vm := NewVM([]Code{})
+	// parse the ast into code
+	vm.parseAst(ast)
+	return vm
 }
 
 // Runs the program
@@ -199,4 +234,18 @@ func main() {
 	result := vm.Run()
 	// print the result
 	showVMResult(result)
+
+	// create an ast
+	int_exp1 := ast.IntExp{Val: 1}
+	int_exp2 := ast.IntExp{Val: 2}
+	plus_exp := ast.PlusExp{Left: int_exp1, Right: int_exp2}
+	mult_exp := ast.MultExp{Left: plus_exp, Right: int_exp2}
+	// load the ast into the vm
+	vm2 := LoadAst(mult_exp)
+	// print the calculation
+	showCalculation(vm2)
+	// run the vm
+	result2 := vm2.Run()
+	// print the result
+	showVMResult(result2)
 }
