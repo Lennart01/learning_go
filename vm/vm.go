@@ -82,7 +82,7 @@ func NewVM(code []Code) VM {
 	return VM{code, list.New()} // initialize the stack as an empty list
 }
 
-func (vm *VM) parseAst(ast_exp ast.Exp) {
+func (vm *VM) transformAst(ast_exp ast.Exp) {
 	// switch case on the type of the ast
 	switch ast_exp := ast_exp.(type) {
 	// if the ast is an int expression
@@ -92,15 +92,15 @@ func (vm *VM) parseAst(ast_exp ast.Exp) {
 	// if the ast is a plus expression
 	case ast.PlusExp:
 		// parse the left and right expressions
-		vm.parseAst(ast_exp.Left)
-		vm.parseAst(ast_exp.Right)
+		vm.transformAst(ast_exp.Left)
+		vm.transformAst(ast_exp.Right)
 		// push a plus code onto the stack
 		vm.code = append(vm.code, NewPlusCode())
 	// if the ast is a mult expression
 	case ast.MultExp:
 		// parse the left and right expressions
-		vm.parseAst(ast_exp.Left)
-		vm.parseAst(ast_exp.Right)
+		vm.transformAst(ast_exp.Left)
+		vm.transformAst(ast_exp.Right)
 		// push a multiply code onto the stack
 		vm.code = append(vm.code, NewMultiplyCode())
 	}
@@ -111,7 +111,7 @@ func LoadAst(ast ast.Exp) VM {
 	// create a new vm
 	vm := NewVM([]Code{})
 	// parse the ast into code
-	vm.parseAst(ast)
+	vm.transformAst(ast)
 	return vm
 }
 
