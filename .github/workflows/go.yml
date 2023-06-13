@@ -43,9 +43,6 @@ jobs:
     - name: VM
       run: 
         go run vm/vm.go
-    - name: AST
-      run:
-        go run ast/ast.go
     - name: Parser
       run:
         go run parser/parser.go
