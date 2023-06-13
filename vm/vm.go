@@ -4,7 +4,7 @@ import (
 	"container/list"
 	"strconv"
 
-	"github.com/lennart01/learning_go/ast"
+	"github.com/lennart01/learning_go/ast.go"
 )
 
 // Optional type is used to represent a value that may or may not exist
