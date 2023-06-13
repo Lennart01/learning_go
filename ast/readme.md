@@ -1,7 +1,6 @@
 # Abstract Syntax Tree
-## Design Goal
-The goal is to replicate the C++ AST in Go.
-## Current State
+This is a simple example of an abstract syntax tree (AST) in C++ and Go.
+## C++ Implementation
 The C++ implementation uses an `Exp class` to represent all expressions.
 The following expressions exist:
 - `IntExp` for integer literals
