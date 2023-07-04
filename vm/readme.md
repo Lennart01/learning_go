@@ -37,10 +37,6 @@ The result variable will contain the result of the calculation.
 ### Error Handling
 - **Both**: Return a special 'nothing' or 'empty' value when an operation cannot be performed, as part of the Maybe/Optional paradigm.
 
-### Memory Management
-- **C++**: Allows direct control over memory through pointers and can manage memory manually, though this is not particularly evident in the provided code.
-- **Go**: Handles memory management automatically with garbage collection.
-
 ### Type Conversion
 - **Go**: Includes type assertions (e.g., `.(int)`) to convert values from the `interface{}` type to the needed specific type due to static typing and no automatic type conversion.
 - **C++**: Also requires explicit type conversion in some cases, but it's not needed in the cpp source code.
